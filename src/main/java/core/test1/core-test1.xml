@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+ <!-- 어떤 객체를 생성해야하는지 작성  (설명서 같은 느낌)-->
+ 
+ <bean id="desk" class="core.test1.Desk">
+   <property name="leg" ref="leg"></property> 
+ </bean>
+ 
+ <bean id="leg" class="core.test1.Leg"></bean>
+ 
+ <bean id="chair" class="core.test1.Chair"> <!-- 파라미터가 없어도 객체를 만들수있다 -->
+       <constructor-arg ref="leg"></constructor-arg> 
+ </bean>   
+ 
+</beans>
