@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.zerock.mapper.BoardMapper"> <!--  mapper 이름이 같으면 됨 -->
+
+  <select id="getList" resultType="org.zerock.domain.BoardVO">
+  
+<!--nmapper에서 작성하는 sql 쿼리문을 여기서 작성해서 
+      쿼리문을 관리하고 작성하기 쉽게 하기 위해서 xml을 사용
+ --> 
+    
+<!-- 테이블 컬럼  자바빈 프로퍼티명과 일치 시킬때 별칭을 써야함 (대소문자구별x) -->   
+  
+  <![CDATA[
+    
+    SELECT 
+    	bno bno,
+    	title title,
+    	content content,
+    	writer writer,
+    	regdate regdate,
+    	updatedate updateDate
+    
+     FROM tbl_board
+     
+     WHERE bno > 0 ORDER BY bno DESC
+     
+    ]]>
+    
+  </select>
+  
+  <select id="getListWithPaging" resultType="org.zerock.domain.BoardVO">
+    
+    <![CDATA[
+    
+    SELECT 
+    	bno bno,
+    	title title,
+    	content content,
+    	writer writer,
+    	regdate regdate,
+    	updatedate updateDate
+    
+     FROM tbl_board
+     
+     ORDER BY bno DESC
+     
+     LIMIT #{from}, #{amount}
+     
+    ]]>
+    
+  </select>
+  
+  <select id="getTotalCount" resultType="int">
+  SELECT COUNT(*) FROM tbl_board
+  </select>
+  
+  <insert id="insert">
+  	INSERT INTO tbl_board (title, content, writer) 
+  	VALUES (#{title}, #{content}, #{writer})
+  </insert>
+  
+  <insert id="insertSelectKey" useGeneratedKeys="true" keyProperty="bno" keyColumn="bno">
+  	INSERT INTO tbl_board (title, content, writer)
+  	VALUES (#{title}, #{content}, #{writer})
+  </insert>
+  
+  <select id="read" resultType="org.zerock.domain.BoardVO">
+  	SELECT 
+  	 bno bno,
+  	 title title,
+  	 content content,
+  	 writer writer,
+  	 regdate regdate,
+  	 updatedate updateDate
+  	FROM tbl_board
+  	WHERE bno = #{bno}
+  </select>
+  
+  <delete id="delete">
+  	DELETE FROM tbl_board WHERE bno = #{bno}
+  </delete>
+  
+  <update id="update">
+  	UPDATE tbl_board
+  	
+  	SET
+  	    title = #{title}, 
+  	    content = #{content},
+  	    writer = #{writer},
+  	    updateDate = NOW()
+  	    
+  	WHERE
+  	    bno = #{bno}
+  
+  </update>
+  
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
