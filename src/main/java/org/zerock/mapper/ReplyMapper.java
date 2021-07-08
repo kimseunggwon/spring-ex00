@@ -2,12 +2,13 @@ package org.zerock.mapper;
 
 import java.util.List;
 
+import org.zerock.domain.MemberVO;
 import org.zerock.domain.ReplyVO;
 
 public interface ReplyMapper {
 
 	public int insert(ReplyVO vo);
-	 
+	
 	public int insertSelectKey(ReplyVO vo);
 	
 	public ReplyVO read(Long rno);
@@ -16,12 +17,17 @@ public interface ReplyMapper {
 	
 	public int update(ReplyVO vo);
 	
-	public List<ReplyVO> getList(long bno);
+	public List<ReplyVO> getList(Long bno);
+	
+	public int getCountByBno(Long bno);
+	
+	public int deleteByBno(Long bno);
+
+	public void removeByUserid(MemberVO vo);
 }
 
 
-
-
+ 
 
 
 

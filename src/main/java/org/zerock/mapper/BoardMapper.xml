@@ -3,17 +3,31 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
-<mapper namespace="org.zerock.mapper.BoardMapper"> <!--  mapper 이름이 같으면 됨 -->
+<mapper namespace="org.zerock.mapper.BoardMapper">
+
+	<sql id="criteria">
+     <where>
+	     <foreach item="type" separator="OR" collection="typeArr">
+	     	<choose>
+	     		<when test='type == "T"'>
+	     			b.title LIKE CONCAT('%', #{keyword}, '%')
+	     		</when>
+	     		<when test='type == "W"'>
+	     			b.writer LIKE CONCAT('%', #{keyword}, '%')
+	     		</when>
+	     		<when test='type == "C"'>
+	     			b.content LIKE CONCAT('%', #{keyword}, '%')
+	     		</when>
+	     	</choose>
+	     </foreach>
+     </where>	
+	</sql>
+
+
 
   <select id="getList" resultType="org.zerock.domain.BoardVO">
-  
-<!--nmapper에서 작성하는 sql 쿼리문을 여기서 작성해서 
-      쿼리문을 관리하고 작성하기 쉽게 하기 위해서 xml을 사용
- --> 
     
-<!-- 테이블 컬럼  자바빈 프로퍼티명과 일치 시킬때 별칭을 써야함 (대소문자구별x) -->   
-  
-  <![CDATA[
+    <![CDATA[
     
     SELECT 
     	bno bno,
@@ -32,29 +46,29 @@
   </select>
   
   <select id="getListWithPaging" resultType="org.zerock.domain.BoardVO">
-    
-    <![CDATA[
-    
+
     SELECT 
-    	bno bno,
-    	title title,
-    	content content,
-    	writer writer,
-    	regdate regdate,
-    	updatedate updateDate
-    
-     FROM tbl_board
-     
-     ORDER BY bno DESC
-     
+    	b.bno bno,
+    	b.title title,
+    	b.content content,
+    	b.writer writer,
+    	b.regdate regdate,
+    	b.updatedate updateDate,
+    	m.username writerName,
+    	count(r.rno) replyCnt
+     FROM tbl_board b LEFT JOIN tbl_reply r ON b.bno = r.bno
+                     INNER JOIN tbl_member m ON b.writer = m.userid
+
+	<include refid="criteria"></include>
+	 GROUP BY b.bno
+     ORDER BY b.bno DESC
      LIMIT #{from}, #{amount}
-     
-    ]]>
-    
+
   </select>
   
   <select id="getTotalCount" resultType="int">
-  SELECT COUNT(*) FROM tbl_board
+  SELECT COUNT(*) FROM tbl_board b
+  <include refid="criteria"></include>
   </select>
   
   <insert id="insert">
@@ -69,14 +83,17 @@
   
   <select id="read" resultType="org.zerock.domain.BoardVO">
   	SELECT 
-  	 bno bno,
-  	 title title,
-  	 content content,
-  	 writer writer,
-  	 regdate regdate,
-  	 updatedate updateDate
-  	FROM tbl_board
-  	WHERE bno = #{bno}
+  	 b.bno bno,
+  	 b.title title,
+  	 b.content content,
+  	 b.writer writer,
+  	 b.regdate regdate,
+  	 b.updatedate updateDate,
+  	 f.fileName fileName,
+  	 m.username writerName
+  	FROM tbl_board b LEFT JOIN tbl_board_file f ON b.bno = f.bno
+  	                      JOIN tbl_member m ON b.writer = m.userid
+  	WHERE b.bno = #{bno}
   </select>
   
   <delete id="delete">
@@ -97,12 +114,12 @@
   
   </update>
   
+  <delete id="removeByUserid">
+  DELETE FROM tbl_board
+  WHERE writer = #{userid}
+  </delete>
+  
 </mapper>
-
-
-
-
-
 
 
 
